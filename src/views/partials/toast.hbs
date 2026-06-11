@@ -1,0 +1,313 @@
+{{!-- src/views/partials/toast.hbs --}}
+<div class="toast-container" id="toastContainer"></div>
+
+<style>
+  .toast-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    pointer-events: none;
+  }
+
+  .toast {
+    min-width: 280px;
+    max-width: 380px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    pointer-events: auto;
+    transform: translateX(100%);
+    animation: slideIn 0.3s ease forwards;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .toast.closing {
+    animation: slideOut 0.3s ease forwards;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideOut {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  }
+
+  .toast-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+
+  .toast-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .toast-icon i {
+    font-size: 1.25rem;
+  }
+
+  .toast-message {
+    flex: 1;
+  }
+
+  .toast-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: #222222;
+  }
+
+  .toast-text {
+    font-size: 0.875rem;
+    color: #484848;
+    line-height: 1.4;
+  }
+
+  .toast-close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 50%;
+    color: #717171;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .toast-close:hover {
+    background: #f7f7f7;
+    color: #222222;
+  }
+
+  .toast-close i {
+    font-size: 1rem;
+  }
+
+  .toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: rgba(0, 0, 0, 0.1);
+    width: 100%;
+  }
+
+  .toast-progress-bar {
+    height: 100%;
+    width: 100%;
+    background: currentColor;
+    animation: progress linear forwards;
+  }
+
+  @keyframes progress {
+    from {
+      width: 100%;
+    }
+    to {
+      width: 0%;
+    }
+  }
+
+  /* Toast Types */
+  .toast-success {
+    border-left: 4px solid #34A853;
+  }
+  .toast-success .toast-icon i {
+    color: #34A853;
+  }
+  .toast-success .toast-progress-bar {
+    background: #34A853;
+  }
+
+  .toast-error {
+    border-left: 4px solid #EA4335;
+  }
+  .toast-error .toast-icon i {
+    color: #EA4335;
+  }
+  .toast-error .toast-progress-bar {
+    background: #EA4335;
+  }
+
+  .toast-warning {
+    border-left: 4px solid #FBBC05;
+  }
+  .toast-warning .toast-icon i {
+    color: #FBBC05;
+  }
+  .toast-warning .toast-progress-bar {
+    background: #FBBC05;
+  }
+
+  .toast-info {
+    border-left: 4px solid #4285F4;
+  }
+  .toast-info .toast-icon i {
+    color: #4285F4;
+  }
+  .toast-info .toast-progress-bar {
+    background: #4285F4;
+  }
+</style>
+
+<script>
+  (function() {
+    let toastCounter = 0;
+
+    /**
+     * Show a toast notification
+     * @param {string} message - The toast message
+     * @param {string} type - 'success', 'error', 'warning', 'info'
+     * @param {string} title - Optional title (defaults based on type)
+     * @param {number} duration - Duration in ms (default: 4000)
+     */
+    function showToast(message, type = 'info', title = '', duration = 4000) {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+
+      const titles = {
+        success: title || 'Success',
+        error: title || 'Error',
+        warning: title || 'Warning',
+        info: title || 'Information'
+      };
+
+      const icons = {
+        success: 'bi-check-circle-fill',
+        error: 'bi-exclamation-octagon-fill',
+        warning: 'bi-exclamation-triangle-fill',
+        info: 'bi-info-circle-fill'
+      };
+
+      const toastId = `toast-${Date.now()}-${toastCounter++}`;
+      
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.id = toastId;
+      
+      toast.innerHTML = `
+        <div class="toast-content">
+          <div class="toast-icon">
+            <i class="bi ${icons[type]}"></i>
+          </div>
+          <div class="toast-message">
+            <div class="toast-title">${escapeHtml(titles[type])}</div>
+            <div class="toast-text">${escapeHtml(message)}</div>
+          </div>
+          <button class="toast-close" aria-label="Close">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+        <div class="toast-progress">
+          <div class="toast-progress-bar" style="animation-duration: ${duration}ms;"></div>
+        </div>
+      `;
+      
+      container.appendChild(toast);
+      
+      const closeBtn = toast.querySelector('.toast-close');
+      let timeoutId;
+      
+      function closeToast() {
+        if (toast.classList.contains('closing')) return;
+        toast.classList.add('closing');
+        if (timeoutId) clearTimeout(timeoutId);
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
+      }
+      
+      closeBtn.addEventListener('click', closeToast);
+      
+      timeoutId = setTimeout(() => {
+        closeToast();
+      }, duration);
+    }
+    
+    // Helper function to escape HTML
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    // Convenience methods
+    function toastSuccess(message, title = '') {
+      showToast(message, 'success', title);
+    }
+    
+    function toastError(message, title = '') {
+      showToast(message, 'error', title);
+    }
+    
+    function toastWarning(message, title = '') {
+      showToast(message, 'warning', title);
+    }
+    
+    function toastInfo(message, title = '') {
+      showToast(message, 'info', title);
+    }
+    
+    // Auto-display flash messages from server
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check for flash message variables from Handlebars
+      // These would be rendered into the page as data attributes or global variables
+      
+      // Example: if flash messages are available via meta tags or window object
+      const flashData = window.flashMessages || {};
+      
+      if (flashData.success_msg) {
+        toastSuccess(flashData.success_msg);
+      }
+      if (flashData.error_msg) {
+        toastError(flashData.error_msg);
+      }
+      if (flashData.warning_msg) {
+        toastWarning(flashData.warning_msg);
+      }
+      if (flashData.info_msg) {
+        toastInfo(flashData.info_msg);
+      }
+      
+      // Alternative: Read from data attributes on body
+      const body = document.body;
+      if (body.dataset.successMsg) {
+        toastSuccess(body.dataset.successMsg);
+      }
+      if (body.dataset.errorMsg) {
+        toastError(body.dataset.errorMsg);
+      }
+      if (body.dataset.warningMsg) {
+        toastWarning(body.dataset.warningMsg);
+      }
+      if (body.dataset.infoMsg) {
+        toastInfo(body.dataset.infoMsg);
+      }

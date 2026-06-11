@@ -6,7 +6,7 @@ const   ROLE  = require("../../constants/role");
 const { cookieValue } = require("../../constants/cookieValue");
 const  VIEW  = require("../../constants/viewName");
 const houseCategoryModel = require("../../models/catefory.model");
-const userModel = require("../../models/user.model");
+const userModel = require("../../models/User");
 class HouseController {
   async addComment(req, res, next) {
     try {
@@ -124,7 +124,7 @@ class HouseController {
       });
     } catch (error) {
       console.error(error);
-      res.status(500).send("Internal Server Error");
+      res.status(500).send("Internal Server Erroccr");
     }
   }
 
@@ -158,7 +158,7 @@ class HouseController {
       const items = await houseCategoryModel.find({ gender: req.params.gender }).lean();
       const categories = items.map((item) => item.toObject());
 
-      res.render(VIEW_NAME.ADD_HOUSE_TITLE_PAGE, { items: categories, hideNavigation: true, process: 0 });
+      res.render(VIEW.ADD_HOUSE_TITLE_PAGE, { items: categories, hideNavigation: true, process: 0 });
     } catch (error) {
       console.error(error);
       res.status(500).send("Internal Server Error");
@@ -168,15 +168,15 @@ class HouseController {
   //GET /host/room/detail
   DisplayDetail(req, res, next) {
 
-    res.render(VIEW_NAME.ADD_HOUSE_DETAIL_PAGE, { hideNavigation: true, process: 25 });
+    res.render(VIEW.ADD_HOUSE_DETAIL_PAGE, { hideNavigation: true, process: 25 });
   }
   //GET /host/room/photos
   DisplayPhotos(req, res, next) {
-    res.render(VIEW_NAME.ADD_HOUSE_PHOTO_PAGE, { hideNavigation: true, process: 50 });
+    res.render(VIEW.ADD_HOUSE_PHOTO_PAGE, { hideNavigation: true, process: 50 });
   }
   //GET /host/room/price
   DisplayPrice(req, res, next) {
-    res.render(VIEW_NAME.ADD_HOUSE_PRICE_PAGE, { hideNavigation: true, process: 75 });
+    res.render(VIEW.ADD_HOUSE_PRICE_PAGE, { hideNavigation: true, process: 75 });
   }
   /**
    * Saves the title of the room.
@@ -196,7 +196,7 @@ class HouseController {
     /**
      * Redirects to the room detail page.
      */
-    res.redirect("/host/room/detail");
+    res.redirect("/room/detail");
   }
   /**
  * Saves the room information to the database.
@@ -205,6 +205,7 @@ class HouseController {
  * @param {Function} next - The next middleware function.
  */
   SaveDetail(req, res, next) {
+    console.log(req.body);
     /**
      * Sets the maximum customer count cookie.
      */

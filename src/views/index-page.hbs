@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #FF385C;
+            --primary-dark: #D93B5C;
+            --primary-light: #FF6B8A;
+            --secondary: #222222;
+            --gray-bg: #F7F7F7;
+            --card-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            --card-hover: 0 12px 24px rgba(0,0,0,0.12);
+            --transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--gray-bg);
+            color: var(--secondary);
+        }
+
+        /* Hero Section - Full Width */
+        .hero {
+            background: linear-gradient(135deg, #FF385C 0%, #FF6B8A 50%, #FF8FA3 100%);
+            padding: 80px 20px 100px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') repeat-x bottom;
+            background-size: cover;
+            opacity: 0.3;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Search Bar - Centered with max-width */
+        .search-container {
+            max-width: 800px;
+            margin: -40px auto 30px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .search-card {
+            background: white;
+            border-radius: 60px;
+            padding: 8px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .search-input-group {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input-group i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .search-input-group input {
+            width: 100%;
+            padding: 16px 20px 16px 48px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            background: #F7F7F7;
+            transition: var(--transition);
+        }
+
+        .search-input-group input:focus {
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .search-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .search-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.02);
+        }
+
+        /* Category Section - FULL WIDTH */
+        .category-section {
+            background: white;
+            padding: 20px 0;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #eee;
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .category-slider {
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        /* Slick Slider Full Width Fix */
+        .slick-slider {
+            width: 100%;
+        }
+
+        .slick-list {
+            overflow: visible;
+        }
+
+        .category-item {
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            opacity: 0.6;
+            padding: 8px;
+            display: inline-block;
+        }
+
+        .category-item:hover, .category-item.active {
+            opacity: 1;
+            transform: translateY(-5px);
+        }
+
+        .category-item img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .category-item p {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--secondary);
+            margin: 0;
+        }
+
+        /* Sort Bar - Full Width with proper spacing */
+        .sort-bar {
+            max-width: 1400px;
+            margin: 0 auto 30px;
+            padding: 0 20px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sort-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .sort-btn {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 40px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .sort-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .filter-btn {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 40px;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Houses Grid - Full Width Responsive */
+        .houses-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 28px;
+        }
+
+        .house-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: var(--transition);
+            cursor: pointer;
+            box-shadow: var(--card-shadow);
+            position: relative;
+        }
+
+        .house-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--card-hover);
+        }
+
+        .house-image {
+            position: relative;
+            height: 280px;
+            overflow: hidden;
+        }
+
+        .house-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .house-card:hover .house-image img {
+            transform: scale(1.05);
+        }
+
+        .host-avatar {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 2;
+            background: white;
+            object-fit: cover;
+        }
+
+        .wishlist-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: none;
+            z-index: 2;
+        }
+
+        .wishlist-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .wishlist-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .carousel-control-custom {
+            width: 32px;
+            height: 32px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .house-card:hover .carousel-control-custom {
+            opacity: 1;
+        }
+
+        .carousel-prev {
+            left: 10px;
+        }
+
+        .carousel-next {
+            right: 10px;
+        }
+
+        .house-info {
+            padding: 16px;
+        }
+
+        .house-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+            color: var(--secondary);
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .house-location {
+            font-size: 0.85rem;
+            color: #717171;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .house-rating {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .stars {
+            color: #FF385C;
+            font-size: 0.85rem;
+        }
+
+        .review-count {
+            font-size: 0.8rem;
+            color: #717171;
+        }
+
+        .house-price {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--secondary);
+        }
+
+        .house-price span {
+            font-weight: 400;
+            font-size: 0.85rem;
+            color: #717171;
+        }
+
+        /* Modal Styles */
+        .modal-custom .modal-content {
+            border-radius: 24px;
+            border: none;
+            overflow: hidden;
+        }
+
+        .modal-header-custom {
+            border-bottom: 1px solid #eee;
+            padding: 20px 24px;
+            background: white;
+        }
+
+        .wishlist-item {
+            padding: 14px 20px;
+            border: 1px solid #eee;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            transition: var(--transition);
+            width: 100%;
+            text-align: left;
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .wishlist-item:hover {
+            border-color: var(--primary);
+            background: #FFF5F5;
+            transform: translateX(4px);
+        }
+
+        /* Filter Modal */
+        .range-slider {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .range-values {
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .filter-option {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-option input {
+            display: none;
+        }
+
+        .filter-option.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* Chart */
+        .chart-container {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 24px;
+            grid-column: 1 / -1;
+        }
+
+        .no-results i {
+            font-size: 4rem;
+            color: #ccc;
+            margin-bottom: 16px;
+        }
+
+        /* Slick Arrows Customization */
+        .slick-prev, .slick-next {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        .slick-prev:hover, .slick-next:hover {
+            background: var(--primary);
+        }
+
+        .slick-prev:before, .slick-next:before {
+            font-family: 'slick';
+            font-size: 20px;
+            color: #222;
+        }
+
+        .slick-prev:hover:before, .slick-next:hover:before {
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .houses-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .search-card {
+                border-radius: 30px;
+                flex-direction: column;
+            }
+            
+            .search-btn {
+                padding: 14px;
+            }
+            
+            .houses-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 0 16px 40px;
+            }
+            
+            .sort-bar {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 0 16px;
+            }
+            
+            .sort-buttons {
+                justify-content: center;
+            }
+            
+            .slick-prev, .slick-next {
+                width: 32px;
+                height: 32px;
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .houses-grid {
+                grid-template-columns: repeat(4, 1fr);
+                max-width: 1600px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>Find your perfect stay ✨</h1>
+        <p>Discover unique homes and experience the world like never before</p>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+        <form action="/" method="GET" class="search-card">
+            <div class="search-input-group">
+                <i class="bi bi-search"></i>
+                <input type="text" name="search" placeholder="Search destinations..." value="{{query.search}}">
+            </div>
+            <button type="submit" class="search-btn">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </form>
+    </div>
+
+    <!-- Category Slider - Full Width -->
+    <div class="category-section">
+        <div class="category-slider">
+            <div class="category-item active" data-type="" onclick="filterByCategory('')">
+                <i class="bi bi-grid-3x3-gap-fill" style="font-size: 32px; color: var(--primary);"></i>
+                <p>All</p>
+            </div>
+            {{#each house_category_list}}
+            <div class="category-item" data-type="{{this._id}}" onclick="filterByCategory('{{this._id}}')">
+                <img src="{{this.img}}" alt="{{this.name}}">
+                <p>{{this.name}}</p>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+
+    <!-- Sort & Filter Bar -->
+    <div class="sort-bar">
+        <div class="sort-buttons">
+            <form method="get" action="/" id="sortIncreForm" style="display: inline;">
+                {{#each query}}
+                    {{#if @key}}
+                        {{#if_eq @key 'incre'}}{{else}}
+                        <input type="hidden" name="{{@key}}" value="{{this}}">
+                        {{/if_eq}}
+                    {{/if}}
+                {{/each}}
+                <button type="submit" name="incre" value="1" class="sort-btn">
+                    <i class="bi bi-arrow-up"></i> Price: Low to High
+                </button>
+            </form>
+            <form method="get" action="/" id="sortDecForm" style="display: inline;">
+                {{#each query}}
+                    {{#if @key}}
+                        {{#if_eq @key 'dec'}}{{else}}
+                        <input type="hidden" name="{{@key}}" value="{{this}}">
+                        {{/if_eq}}
+                    {{/if}}
+                {{/each}}
+                <button type="submit" name="dec" value="1" class="sort-btn">
+                    <i class="bi bi-arrow-down"></i> Price: High to Low
+                </button>
+            </form>
+            <form method="get" action="/" id="sortNewestForm" style="display: inline;">
+                {{#each query}}
+                    {{#if @key}}
+                        {{#if_eq @key 'newest'}}{{else}}
+                        <input type="hidden" name="{{@key}}" value="{{this}}">
+                        {{/if_eq}}
+                    {{/if}}
+                {{/each}}
+                <button type="submit" name="newest" value="1" class="sort-btn">
+                    <i class="bi bi-clock-history"></i> Newest First
+                </button>
+            </form>
+        </div>
+        <button class="filter-btn" data-bs-toggle="modal" data-bs-target="#filterModal">
+            <i class="bi bi-funnel"></i> Filters
+        </button>
+    </div>
+
+    <!-- Houses Grid -->
+    <div class="houses-grid" id="housesGrid">
+        {{#each sorted_house_list}}
+        <div class="house-card" data-id="{{this._id}}">
+            <div class="house-image">
+                {{#if this.host.avatar}}
+                <img src="{{this.host.avatar}}" class="host-avatar" alt="{{this.host.name}}">
+                {{/if}}
+                
+                <button class="wishlist-btn {{#if (inWishlist this._id ../wish)}}active{{/if}}" 
+                        data-room-id="{{this._id}}" 
+                        onclick="toggleWishlist('{{this._id}}', event)">
+                    <i class="bi {{#if (inWishlist this._id ../wish)}}bi-heart-fill{{else}}bi-heart{{/if}}"></i>
+                </button>
+                
+                <div id="carousel{{@index}}" class="carousel slide" data-bs-ride="false">
+                    <div class="carousel-inner">
+                        {{#each this.images}}
+                        <div class="carousel-item {{#if @first}}active{{/if}}">
+                            <img src="{{this.url}}" alt="Property image">
+                        </div>
+                        {{/each}}
+                        {{#unless this.images.length}}
+                        <div class="carousel-item active">
+                            <img src="/img/default-house.jpg" alt="Default image">
+                        </div>
+                        {{/unless}}
+                    </div>
+                    {{#if (gt this.images.length 1)}}
+                    <div class="carousel-control-custom carousel-prev" onclick="event.stopPropagation(); changeSlide('carousel{{@index}}', 'prev')">
+                        <i class="bi bi-chevron-left"></i>
+                    </div>
+                    <div class="carousel-control-custom carousel-next" onclick="event.stopPropagation(); changeSlide('carousel{{@index}}', 'next')">
+                        <i class="bi bi-chevron-right"></i>
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+            
+            <div class="house-info">
+                <a href="/rooms/{{this._id}}" style="text-decoration: none; color: inherit;">
+                    <div class="house-name">{{this.name}}</div>
+                    <div class="house-location">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <span>{{this.city}}, {{this.district}}</span>
+                    </div>
+                    <div class="house-rating">
+                        <div class="stars">{{stars this.rating}}</div>
+                        <span class="review-count">({{this.review_count}} reviews)</span>
+                    </div>
+                    <div class="house-price">
+                        {{formatCurrency this.price}} <span>night</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        {{else}}
+        <div class="no-results">
+            <i class="bi bi-emoji-frown"></i>
+            <h4>No properties found</h4>
+            <p>Try adjusting your search or filters</p>
+            <button class="sort-btn" onclick="resetFilters()">Clear all filters</button>
+        </div>
+        {{/each}}
+    </div>
+
+    <!-- Wishlist Modal -->
+    <div class="modal fade modal-custom" id="wishlistModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header-custom d-flex justify-content-between align-items-center">
+                    <h5 class="modal-title">
+                        <i class="bi bi-heart-fill text-danger"></i> Save to wishlist
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="padding: 24px;">
+                    <input type="hidden" id="currentRoomId">
+                    {{#each wish}}
+                    <form action="/wishlist/update/{{this._id}}" method="post" class="wishlist-form">
+                        <input type="hidden" name="roomId" class="room-id-input">
+                        <button type="submit" class="wishlist-item">
+                            <i class="bi bi-bookmark"></i>
+                            <span>{{this.name}}</span>
+                        </button>
+                    </form>
+                    {{/each}}
+                    <button class="wishlist-item" data-bs-target="#collectionModal" data-bs-toggle="modal" data-bs-dismiss="modal">
+                        <i class="bi bi-plus-circle"></i>
+                        <span>Create new wishlist</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Collection Modal -->
+    <div class="modal fade modal-custom" id="collectionModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header-custom">
+                    <h5 class="modal-title">Create new wishlist</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="padding: 24px;">
+                    <form action="/wishlist/collection" method="post">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Wishlist name</label>
+                            <input type="text" name="name" class="form-control" placeholder="e.g., Dream homes, Beach escapes..." required style="border-radius: 12px; padding: 12px;">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100" style="background: var(--primary); border: none; padding: 14px; border-radius: 12px; font-weight: 600;">
+                            Create
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Modal -->
+    <div class="modal fade modal-custom" id="filterModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header-custom">
+                    <h5 class="modal-title"><i class="bi bi-sliders2"></i> Filter stays</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="padding: 24px;">
+                    <form id="filterForm" action="/" method="get">
+                        <div class="chart-container">
+                            <canvas id="priceChart" width="400" height="200"></canvas>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Price range (VNĐ)</label>
+                            <div class="range-slider">
+                                <div class="range-values" id="priceRange">₫0 - ₫300,000</div>
+                                <input type="range" id="minPrice" name="minPrice" min="0" max="300" value="{{query.minPrice}}" class="form-range">
+                                <input type="range" id="maxPrice" name="maxPrice" min="0" max="300" value="{{query.maxPrice}}" class="form-range mt-3">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Max guests</label>
+                            <div class="d-flex gap-2 flex-wrap">
+                                {{#range 0 6}}
+                                <label class="filter-option {{#if_eq this ../query.quantity}}selected{{/if_eq}}">
+                                    <input type="radio" name="quantity" value="{{this}}" {{#if_eq this ../query.quantity}}checked{{/if_eq}}>
+                                    <span>{{#if_eq this 0}}Any{{else}}{{this}}{{/if_eq}}</span>
+                                </label>
+                                {{/range}}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Bedrooms</label>
+                            <div class="d-flex gap-2 flex-wrap">
+                                {{#range 0 6}}
+                                <label class="filter-option {{#if_eq this ../query.bedroom}}selected{{/if_eq}}">
+                                    <input type="radio" name="bedroom" value="{{this}}" {{#if_eq this ../query.bedroom}}checked{{/if_eq}}>
+                                    <span>{{#if_eq this 0}}Any{{else}}{{this}}{{/if_eq}}</span>
+                                </label>
+                                {{/range}}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Bathrooms</label>
+                            <div class="d-flex gap-2 flex-wrap">
+                                {{#range 0 6}}
+                                <label class="filter-option {{#if_eq this ../query.showerroom}}selected{{/if_eq}}">
+                                    <input type="radio" name="showerroom" value="{{this}}" {{#if_eq this ../query.showerroom}}checked{{/if_eq}}>
+                                    <span>{{#if_eq this 0}}Any{{else}}{{this}}{{/if_eq}}</span>
+                                </label>
+                                {{/range}}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid #eee; padding: 16px 24px;">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="border-radius: 40px; padding: 10px 24px;">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="applyFiltersBtn" style="background: var(--primary); border: none; border-radius: 40px; padding: 10px 32px;">Apply filters</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Initialize Slick Slider - Full width with proper settings
+            $('.category-slider').slick({
+                slidesToShow: 8,
+                slidesToScroll: 1,
+                arrows: true,
+                infinite: false,
+                responsive: [
+                    { breakpoint: 1400, settings: { slidesToShow: 7 } },
+                    { breakpoint: 1200, settings: { slidesToShow: 6 } },
+                    { breakpoint: 992, settings: { slidesToShow: 5 } },
+                    { breakpoint: 768, settings: { slidesToShow: 4 } },
+                    { breakpoint: 576, settings: { slidesToShow: 3 } },
+                    { breakpoint: 480, settings: { slidesToShow: 2 } }
+                ]
+            });
+            
+            // Initialize Price Chart
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            const priceLabels = {{{price_label_list}}};
+            const priceValues = {{{price_value_list}}};
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: priceLabels.slice(0, 50),
+                    datasets: [{
+                        label: 'Number of properties',
+                        data: priceValues.slice(0, 50),
+                        borderColor: '#FF385C',
+                        backgroundColor: 'rgba(255, 56, 92, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: (ctx) => `${ctx.raw} properties` } }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Price (thousands VND)' } },
+                        y: { title: { display: true, text: 'Number of properties' }, beginAtZero: true }
+                    }
+                }
+            });
+            
+            // Price range slider
+            const minSlider = document.getElementById('minPrice');
+            const maxSlider = document.getElementById('maxPrice');
+            const priceRange = document.getElementById('priceRange');
+            
+            function updatePriceRange() {
+                let min = parseInt(minSlider.value);
+                let max = parseInt(maxSlider.value);
+                if (min > max) { [min, max] = [max, min]; }
+                priceRange.innerText = `₫${min * 1000} - ₫${max * 1000}`;
+            }
+            
+            minSlider.oninput = updatePriceRange;
+            maxSlider.oninput = updatePriceRange;
+            updatePriceRange();
+            
+            // Filter options styling
+            document.querySelectorAll('.filter-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const radio = this.querySelector('input[type="radio"]');
+                    if (radio) {
+                        radio.checked = true;
+                        document.querySelectorAll('.filter-option').forEach(opt => opt.classList.remove('selected'));
+                        this.classList.add('selected');
+                    }
+                });
+            });
+            
+            document.getElementById('applyFiltersBtn').addEventListener('click', () => {
+                document.getElementById('filterForm').submit();
+            });
+        });
+        
+        function filterByCategory(typeId) {
+            const currentUrl = new URL(window.location.href);
+            if (typeId) {
+                currentUrl.searchParams.set('type', typeId);
+            } else {
+                currentUrl.searchParams.delete('type');
+            }
+            window.location.href = currentUrl.toString();
+        }
+        
+        function changeSlide(carouselId, direction) {
+            const carousel = document.querySelector(`#${carouselId}`);
+            if (carousel) {
+                const bsCarousel = bootstrap.Carousel.getInstance(carousel);
+                if (direction === 'prev') bsCarousel.prev();
+                else bsCarousel.next();
+            }
+        }
+        
+        let currentRoomId = null;
+        
+        function toggleWishlist(roomId, event) {
+            event.stopPropagation();
+            if (!{{isLoggedIn}}) {
+                window.location.href = '/login';
+                return;
+            }
+            currentRoomId = roomId;
+            document.getElementById('currentRoomId').value = roomId;
+            document.querySelectorAll('.room-id-input').forEach(input => input.value = roomId);
+            const modal = new bootstrap.Modal(document.getElementById('wishlistModal'));
+            modal.show();
+        }
+        
+        function resetFilters() {
+            window.location.href = '/';
+        }
+        
+        // Scroll animation
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.house-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.5s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>

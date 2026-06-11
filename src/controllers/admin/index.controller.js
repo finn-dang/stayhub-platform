@@ -1,6 +1,6 @@
 
 const reservationModel = require("../../models/reservation.model");
-const userModel = require("../../models/user.model");
+const userModel = require("../../models/User");
 const houseModel = require("../../models/house.model");
 const moment = require("moment/moment");
 const VIEW=require("../../constants/viewName");

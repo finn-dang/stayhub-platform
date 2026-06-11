@@ -1,0 +1,284 @@
+{{!-- src/views/pages/host/rooms.hbs --}}
+<div class="host-rooms">
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="page-title">My Rooms</h1>
+            <a href="/host/rooms/create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Add New Room
+            </a>
+        </div>
+        
+        {{#if rooms.length}}
+        <div class="rooms-grid">
+            {{#each rooms}}
+            <div class="room-card">
+                <div class="room-image">
+                    {{#if this.images.length}}
+                    <img src="{{this.images.[0].url}}" alt="{{this.name}}">
+                    {{else}}
+                    <img src="https://placehold.co/400x300/F7F7F7/717171?text=No+Image" alt="No image">
+                    {{/if}}
+                    <span class="room-status status-{{this.status}}">{{this.status}}</span>
+                </div>
+                <div class="room-body">
+                    <h3 class="room-title">{{this.name}}</h3>
+                    <p class="room-location">
+                        <i class="bi bi-geo-alt"></i> {{this.city}}, {{this.district}}
+                    </p>
+                    <p class="room-price">{{formatCurrency this.price}} <span>/ night</span></p>
+                    <div class="room-stats">
+                        <span><i class="bi bi-eye"></i> {{this.views}} views</span>
+                        <span><i class="bi bi-star-fill"></i> {{this.rating}}</span>
+                    </div>
+                </div>
+                <div class="room-footer">
+                    <a href="/host/rooms/edit/{{this._id}}" class="btn-edit">
+                        <i class="bi bi-pencil"></i> Edit
+                    </a>
+                    <form action="/host/rooms/delete/{{this._id}}" method="post" class="delete-form" onsubmit="return confirm('Delete this room permanently?')">
+                        <button type="submit" class="btn-delete">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+        {{else}}
+        <div class="empty-state">
+            <i class="bi bi-house-slash"></i>
+            <h3>No rooms yet</h3>
+            <p>You haven't created any rooms. Click the button above to create your first listing!</p>
+            <a href="/host/rooms/create" class="btn btn-primary mt-3">Create Your First Room</a>
+        </div>
+        {{/if}}
+    </div>
+</div>
+
+<style>
+.host-rooms {
+    background: #F7F7F7;
+    min-height: calc(100vh - 200px);
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.page-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #222222;
+}
+
+.btn-primary {
+    background: #FF385C;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 40px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: #E31C5F;
+    transform: translateY(-2px);
+}
+
+.rooms-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.room-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.room-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+.room-image {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.room-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.room-card:hover .room-image img {
+    transform: scale(1.05);
+}
+
+.room-status {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    background: white;
+}
+
+.status-pending {
+    color: #FBBC05;
+}
+
+.status-active {
+    color: #34A853;
+}
+
+.status-inactive {
+    color: #EA4335;
+}
+
+.status-rejected {
+    color: #EA4335;
+}
+
+.room-body {
+    padding: 16px;
+}
+
+.room-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #222222;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.room-location {
+    font-size: 14px;
+    color: #717171;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.room-price {
+    font-size: 20px;
+    font-weight: 700;
+    color: #FF385C;
+    margin-bottom: 12px;
+}
+
+.room-price span {
+    font-size: 14px;
+    font-weight: 400;
+    color: #717171;
+}
+
+.room-stats {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    color: #717171;
+}
+
+.room-stats i {
+    margin-right: 4px;
+}
+
+.room-footer {
+    display: flex;
+    border-top: 1px solid #EAEAEA;
+    padding: 12px 16px;
+    gap: 12px;
+}
+
+.btn-edit,
+.btn-delete {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-edit {
+    background: #F7F7F7;
+    color: #222222;
+    border: none;
+}
+
+.btn-edit:hover {
+    background: #FF385C;
+    color: white;
+}
+
+.btn-delete {
+    background: #FEF2F0;
+    color: #EA4335;
+    border: none;
+}
+
+.btn-delete:hover {
+    background: #EA4335;
+    color: white;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    background: white;
+    border-radius: 16px;
+}
+
+.empty-state i {
+    font-size: 80px;
+    color: #FF385C;
+    margin-bottom: 24px;
+}
+
+.empty-state h3 {
+    font-size: 24px;
+    margin-bottom: 12px;
+    color: #222222;
+}
+
+.empty-state p {
+    color: #717171;
+}
+
+@media (max-width: 992px) {
+    .rooms-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .rooms-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .page-title {
+        font-size: 24px;
+    }
+}
+</style>

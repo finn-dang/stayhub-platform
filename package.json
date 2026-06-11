@@ -1,14 +1,18 @@
 {
-  "name": "shoppingcart",
+   "name": "hosthub",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "House rental platform",
+  "main": "src/index.js",
+    "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "scss": "sass --watch src/resources/scss:src/public/css",
+     "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+     "bcryptjs": "^2.4.3",
     "@fullcalendar/core": "^5.11.3",
     "@fullcalendar/daygrid": "^5.11.3",
     "@fullcalendar/interaction": "^5.11.3",
@@ -24,6 +28,8 @@
     "brand-colors": "^2.1.1",
     "chart.js": "^2.9.4",
     "cloudinary": "^1.41.0",
+    "connect-flash": "^0.1.1",
+    "connect-mongo": "^6.0.0",
     "cookie": "^0.5.0",
     "cookie-parser": "^1.4.6",
     "cookies-js": "^1.2.3",

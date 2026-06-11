@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng tin cho thuê nhà - Đăng tin nhanh chóng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        /* Modern Header */
+        .modern-header {
+            background: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FF385C, #FF6B6B);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-decoration: none;
+        }
+
+        .progress-indicator {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 8px 20px;
+            border-radius: 50px;
+        }
+
+        .progress-step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .progress-step.active {
+            background: linear-gradient(135deg, #FF385C, #FF6B6B);
+            border-color: #FF385C;
+            color: white;
+        }
+
+        .progress-step.completed {
+            background: #28a745;
+            border-color: #28a745;
+            color: white;
+        }
+
+        /* Main Layout - Dynamic Grid */
+        .main-layout {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 32px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 32px;
+        }
+
+        /* Sidebar Navigation - Smart Tabs */
+        .smart-sidebar {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .nav-category {
+            margin-bottom: 24px;
+        }
+
+        .nav-category-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #6c757d;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover {
+            background: #f8f9fa;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #FFF5F5, #FFE5E5);
+            color: #FF385C;
+        }
+
+        .nav-item i {
+            font-size: 1.2rem;
+            width: 24px;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #28a745;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+
+        /* Content Area - Dynamic Cards */
+        .content-area {
+            background: transparent;
+        }
+
+        .form-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Dynamic Card Grid - Auto adjusts columns */
+        .dynamic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+        }
+
+        .form-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .card-header i {
+            font-size: 1.8rem;
+            color: #FF385C;
+        }
+
+        .card-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 0.85rem;
+        }
+
+        .form-control-modern {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #e9ecef;
+            border-radius: 12px;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .form-control-modern:focus {
+            outline: none;
+            border-color: #FF385C;
+            box-shadow: 0 0 0 3px rgba(255,56,92,0.1);
+        }
+
+        /* Counter Components */
+        .counter-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .counter-control {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .counter-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1.5px solid #e9ecef;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .counter-btn:hover {
+            border-color: #FF385C;
+            color: #FF385C;
+        }
+
+        /* Amenities Grid - Dynamic */
+        .amenities-dynamic {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .amenity-chip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border: 1.5px solid #e9ecef;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+        }
+
+        .amenity-chip:hover {
+            border-color: #FF385C;
+            background: #FFF5F5;
+        }
+
+        .amenity-chip.selected {
+            background: linear-gradient(135deg, #FF385C, #FF6B6B);
+            border-color: #FF385C;
+            color: white;
+        }
+
+        /* Image Upload */
+        .upload-zone {
+            border: 2px dashed #dee2e6;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-zone:hover {
+            border-color: #FF385C;
+            background: #FFF5F5;
+        }
+
+        .image-dynamic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .image-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .image-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Map */
+        #dynamic-map {
+            height: 300px;
+            border-radius: 16px;
+            margin-top: 16px;
+        }
+
+        /* Action Buttons */
+        .action-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #FF385C, #FF6B6B);
+            color: white;
+            border: none;
+            padding: 14px 36px;
+            border-radius: 40px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255,56,92,0.3);
+        }
+
+        .btn-secondary-custom {
+            background: white;
+            border: 1.5px solid #e9ecef;
+            padding: 14px 36px;
+            border-radius: 40px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        /* Responsive - Dynamic Breakpoints */
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            
+            .smart-sidebar {
+                position: static;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 16px;
+                justify-content: center;
+            }
+            
+            .nav-category {
+                flex: 1;
+                min-width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 12px 20px;
+                flex-direction: column;
+            }
+            
+            .main-layout {
+                padding: 20px;
+            }
+            
+            .dynamic-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-footer {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .btn-primary-custom, .btn-secondary-custom {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .dynamic-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="modern-header">
+        <div class="header-container">
+            <a href="/" class="logo">🏠 HostHub</a>
+            <div class="progress-indicator" id="progressIndicator"></div>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        <!-- Smart Sidebar Navigation -->
+        <div class="smart-sidebar" id="smartSidebar"></div>
+
+        <!-- Dynamic Content Area -->
+        <div class="content-area">
+            <form id="mainForm" method="post" enctype="multipart/form-data">
+                <!-- Sections will be populated dynamically -->
+                <div id="sectionsContainer"></div>
+                
+                <div class="action-footer">
+                    <button type="button" class="btn-secondary-custom" id="prevBtn">← Quay lại</button>
+                    <button type="button" class="btn-primary-custom" id="nextBtn">Tiếp theo →</button>
+                    <button type="submit" class="btn-primary-custom" id="submitBtn" style="display: none;">✨ Đăng tin ngay</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Dynamic Sections Configuration
+        const sections = [
+            {
+                id: "basic",
+                title: "Thông tin cơ bản",
+                icon: "bi-house-heart",
+                category: "main",
+                fields: [
+                    { type: "text", name: "name", label: "Tên chỗ ở", placeholder: "Ví dụ: Căn hộ view biển", required: true, col: "full" },
+                    { type: "select", name: "property_type", label: "Loại hình", options: ["Căn hộ", "Nhà nguyên căn", "Villa", "Homestay"], col: "half" },
+                    { type: "select", name: "room_type", label: "Loại phòng", options: ["Toàn bộ nhà", "Phòng riêng", "Phòng chung"], col: "half" },
+                    { type: "number", name: "price", label: "Giá/đêm (VNĐ)", placeholder: "500,000", required: true, col: "half" },
+                    { type: "number", name: "price_weekend", label: "Giá cuối tuần", placeholder: "600,000", col: "half" }
+                ]
+            },
+            {
+                id: "capacity",
+                title: "Sức chứa",
+                icon: "bi-people",
+                category: "main",
+                counters: [
+                    { name: "maximuncus", label: "Khách tối đa", icon: "bi-people-fill" },
+                    { name: "bedroom", label: "Phòng ngủ", icon: "bi-door-closed" },
+                    { name: "bed", label: "Giường ngủ", icon: "bi-bed-fill" },
+                    { name: "bathroom", label: "Phòng tắm", icon: "bi-droplet-fill" }
+                ]
+            },
+            {
+                id: "location",
+                title: "Vị trí",
+                icon: "bi-geo-alt",
+                category: "main",
+                hasMap: true,
+                fields: [
+                    { type: "text", name: "address", label: "Địa chỉ", placeholder: "Số nhà, đường", required: true, col: "full" },
+                    { type: "text", name: "city", label: "Thành phố", placeholder: "TP.HCM", col: "third" },
+                    { type: "text", name: "district", label: "Quận/Huyện", placeholder: "Quận 1", col: "third" },
+                    { type: "text", name: "region", label: "Khu vực", placeholder: "Trung tâm", col: "third" }
+                ]
+            },
+            {
+                id: "amenities",
+                title: "Tiện nghi",
+                icon: "bi-grid-3x3-gap",
+                category: "main",
+                amenities: [
+                    { icon: "bi-wifi", name: "WiFi", key: "wifi" },
+                    { icon: "bi-snow", name: "Điều hòa", key: "ac" },
+                    { icon: "bi-car-front", name: "Chỗ đỗ xe", key: "parking" },
+                    { icon: "bi-tv", name: "TV", key: "tv" },
+                    { icon: "bi-egg-fried", name: "Bếp", key: "kitchen" },
+                    { icon: "bi-water", name: "Hồ bơi", key: "pool" },
+                    { icon: "bi-dumbbell", name: "Gym", key: "gym" },
+                    { icon: "bi-cup-straw", name: "Pet allowed", key: "pets" }
+                ]
+            },
+            {
+                id: "media",
+                title: "Hình ảnh",
+                icon: "bi-images",
+                category: "main",
+                hasImages: true
+            },
+            {
+                id: "rules",
+                title: "Nội quất",
+                icon: "bi-file-text",
+                category: "extra",
+                fields: [
+                    { type: "time", name: "check_in", label: "Giờ nhận phòng", value: "14:00", col: "half" },
+                    { type: "time", name: "check_out", label: "Giờ trả phòng", value: "11:00", col: "half" },
+                    { type: "number", name: "min_nights", label: "Đêm tối thiểu", value: "1", col: "half" },
+                    { type: "number", name: "max_nights", label: "Đêm tối đa", value: "30", col: "half" }
+                ]
+            }
+        ];
+
+        let currentSection = 0;
+        let selectedAmenities = new Set();
+        let map = null;
+        let marker = null;
+
+        // Initialize Sidebar
+        function initSidebar() {
+            const sidebar = document.getElementById('smartSidebar');
+            const categories = {};
+            
+            sections.forEach((section, idx) => {
+                if (!categories[section.category]) {
+                    categories[section.category] = [];
+                }
+                categories[section.category].push({ ...section, index: idx });
+            });
+            
+            sidebar.innerHTML = Object.entries(categories).map(([cat, items]) => `
+                <div class="nav-category">
+                    <div class="nav-category-title">${cat === 'main' ? '📋 THÔNG TIN CHÍNH' : '⚙️ THÔNG TIN BỔ SUNG'}</div>
+                    ${items.map(item => `
+                        <div class="nav-item" data-section="${item.index}" onclick="goToSection(${item.index})">
+                            <i class="${item.icon}"></i>
+                            <span>${item.title}</span>
+                            <div class="nav-badge" id="badge-${item.id}" style="display: none;">✓</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+        }
+
+        // Render Sections Dynamically
+        function renderSections() {
+            const container = document.getElementById('sectionsContainer');
+            
+            container.innerHTML = sections.map((section, idx) => {
+                let content = '';
+                
+                if (section.fields) {
+                    // Group fields by columns
+                    const fullWidthFields = section.fields.filter(f => f.col === 'full');
+                    const halfFields = section.fields.filter(f => f.col === 'half');
+                    const thirdFields = section.fields.filter(f => f.col === 'third');
+                    
+                    content = `
+                        <div class="dynamic-grid">
+                            ${fullWidthFields.map(field => `
+                                <div class="form-card" style="grid-column: 1/-1">
+                                    <div class="form-group">
+                                        <label>${field.label} ${field.required ? '*' : ''}</label>
+                                        <input type="${field.type}" class="form-control-modern" name="${field.name}" placeholder="${field.placeholder || ''}" ${field.required ? 'required' : ''}>
+                                    </div>
+                                </div>
+                            `).join('')}
+                            
+                            ${halfFields.length ? `
+                                <div class="form-card">
+                                    <div class="card-header">
+                                        <i class="bi bi-info-circle"></i>
+                                        <h3>Thông tin chính</h3>
+                                    </div>
+                                    ${halfFields.slice(0, Math.ceil(halfFields.length/2)).map(field => `
+                                        <div class="form-group">
+                                            <label>${field.label}</label>
+                                            ${field.type === 'select' ? `
+                                                <select class="form-control-modern" name="${field.name}">
+                                                    ${field.options.map(opt => `<option>${opt}</option>`).join('')}
+                                                </select>
+                                            ` : `
+                                                <input type="${field.type}" class="form-control-modern" name="${field.name}" placeholder="${field.placeholder || ''}">
+                                            `}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <div class="form-card">
+                                    <div class="card-header">
+                                        <i class="bi bi-currency-dollar"></i>
+                                        <h3>Giá cả</h3>
+                                    </div>
+                                    ${halfFields.slice(Math.ceil(halfFields.length/2)).map(field => `
+                                        <div class="form-group">
+                                            <label>${field.label}</label>
+                                            <input type="${field.type}" class="form-control-modern" name="${field.name}" placeholder="${field.placeholder || ''}">
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                            
+                            ${thirdFields.length ? thirdFields.map(field => `
+                                <div class="form-card">
+                                    <div class="form-group">
+                                        <label>${field.label}</label>
+                                        <input type="${field.type}" class="form-control-modern" name="${field.name}" placeholder="${field.placeholder || ''}">
+                                    </div>
+                                </div>
+                            `).join('') : ''}
+                        </div>
+                    `;
+                }
+                
+                if (section.counters) {
+                    content = `
+                        <div class="dynamic-grid">
+                            ${section.counters.map(counter => `
+                                <div class="form-card">
+                                    <div class="counter-row">
+                                        <span><i class="${counter.icon}"></i> <strong>${counter.label}</strong></span>
+                                        <div class="counter-control">
+                                            <button type="button" class="counter-btn" onclick="changeCounter('${counter.name}', -1)">−</button>
+                                            <span id="${counter.name}_val">1</span>
+                                            <input type="hidden" name="${counter.name}" id="${counter.name}" value="1">
+                                            <button type="button" class="counter-btn" onclick="changeCounter('${counter.name}', 1)">+</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                if (section.amenities) {
+                    content = `
+                        <div class="form-card">
+                            <div class="card-header">
+                                <i class="bi bi-star"></i>
+                                <h3>Tiện nghi & Dịch vụ</h3>
+                            </div>
+                            <div class="amenities-dynamic" id="amenitiesContainer">
+                                ${section.amenities.map(amenity => `
+                                    <div class="amenity-chip" data-key="${amenity.key}" onclick="toggleAmenity(this, '${amenity.key}')">
+                                        <i class="${amenity.icon}"></i>
+                                        <span>${amenity.name}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                if (section.hasImages) {
+                    content = `
+                        <div class="form-card">
+                            <div class="card-header">
+                                <i class="bi bi-images"></i>
+                                <h3>Hình ảnh chỗ ở</h3>
+                            </div>
+                            <div class="upload-zone" onclick="document.getElementById('imageInput').click()">
+                                <i class="bi bi-cloud-upload" style="font-size: 3rem;"></i>
+                                <p>Click để tải ảnh lên</p>
+                                <small>Hỗ trợ JPG, PNG (tối đa 10MB)</small>
+                            </div>
+                            <input type="file" id="imageInput" multiple accept="image/*" style="display: none" onchange="handleImages(this)">
+                            <div class="image-dynamic-grid" id="imagePreview"></div>
+                        </div>
+                    `;
+                }
+                
+                if (section.hasMap) {
+                    content += `
+                        <div class="form-card">
+                            <div class="card-header">
+                                <i class="bi bi-map"></i>
+                                <h3>Vị trí trên bản đồ</h3>
+                            </div>
+                            <div id="dynamic-map"></div>
+                            <input type="hidden" name="lat" id="lat">
+                            <input type="hidden" name="lng" id="lng">
+                        </div>
+                    `;
+                }
+                
+                return `<div class="form-section" data-section="${idx}" id="section-${idx}">${content}</div>`;
+            }).join('');
+            
+            // Initialize map after render
+            if (typeof L !== 'undefined') {
+                setTimeout(initMap, 100);
+            }
+        }
+
+        function goToSection(index) {
+            currentSection = index;
+            updateUI();
+        }
+        
+        function changeStep(delta) {
+            const newStep = currentSection + delta;
+            if (newStep >= 0 && newStep < sections.length) {
+                currentSection = newStep;
+                updateUI();
+            }
+        }
+        
+        function updateUI() {
+            // Update sections visibility
+            document.querySelectorAll('.form-section').forEach((section, idx) => {
+                if (idx === currentSection) {
+                    section.classList.add('active');
+                } else {
+                    section.classList.remove('active');
+                }
+            });
+            
+            // Update navigation active state
+            document.querySelectorAll('.nav-item').forEach((item, idx) => {
+                if (parseInt(item.dataset.section) === currentSection) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+            
+            // Update buttons
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            prevBtn.style.display = currentSection === 0 ? 'none' : 'flex';
+            
+            if (currentSection === sections.length - 1) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'block';
+            } else {
+                nextBtn.style.display = 'block';
+                submitBtn.style.display = 'none';
+            }
+            
+            // Update progress indicator
+            updateProgress();
+        }
+        
+        function updateProgress() {
+            const progressContainer = document.getElementById('progressIndicator');
+            const percent = ((currentSection + 1) / sections.length) * 100;
+            progressContainer.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <i class="bi bi-hourglass-split"></i>
+                    <span>Hoàn thành ${Math.round(percent)}%</span>
+                    <div style="width: 100px; height: 4px; background: #e9ecef; border-radius: 2px; overflow: hidden;">
+                        <div style="width: ${percent}%; height: 100%; background: linear-gradient(90deg, #FF385C, #FF6B6B);"></div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function changeCounter(field, delta) {
+            let currentVal = parseInt(document.getElementById(field).value) || 1;
+            let newVal = Math.max(1, currentVal + delta);
+            document.getElementById(field).value = newVal;
+            document.getElementById(field + '_val').innerText = newVal;
+        }
+        
+        function toggleAmenity(element, key) {
+            element.classList.toggle('selected');
+            if (selectedAmenities.has(key)) {
+                selectedAmenities.delete(key);
+            } else {
+                selectedAmenities.add(key);
+            }
+            
+            // Update hidden input
+            let input = document.querySelector(`input[name="amenity_${key}"]`);
+            if (!input) {
+                input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = `amenities[${key}]`;
+                input.className = `amenity-${key}`;
+                document.getElementById('mainForm').appendChild(input);
+            }
+            input.value = selectedAmenities.has(key) ? 'true' : 'false';
+        }
+        
+        function handleImages(input) {
+            const preview = document.getElementById('imagePreview');
+            for (let file of input.files) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const div = document.createElement('div');
+                    div.className = 'image-item';
+                    div.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                    preview.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function initMap() {
+            const mapElement = document.getElementById('dynamic-map');
+            if (!mapElement) return;
+            
+            if (map) map.remove();
+            map = L.map('dynamic-map').setView([21.0285, 105.8542], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y.png}').addTo(map);
+            
+            map.on('click', function(e) {
+                if (marker) map.removeLayer(marker);
+                marker = L.marker(e.latlng).addTo(map);
+                document.getElementById('lat').value = e.latlng.lat;
+                document.getElementById('lng').value = e.latlng.lng;
+            });
+        }
+        
+        // Event Listeners
+        document.getElementById('nextBtn')?.addEventListener('click', () => changeStep(1));
+        document.getElementById('prevBtn')?.addEventListener('click', () => changeStep(-1));
+        
+        $('#mainForm').on('submit', function(e) {
+            e.preventDefault();
+            alert('✨ Đăng tin thành công! Chờ admin duyệt.');
+            this.submit();
+        });
+        
+        // Initialize
+        initSidebar();
+        renderSections();
+        updateUI();
+    </script>
+</body>
+</html>

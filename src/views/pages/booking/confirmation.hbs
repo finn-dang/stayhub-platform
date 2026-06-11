@@ -1,0 +1,137 @@
+{{!-- src/views/pages/booking/confirmation.hbs --}}
+<div class="confirmation-page">
+    <div class="container py-5">
+        <div class="confirmation-card text-center">
+            <div class="success-icon mb-4">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <h1 class="mb-3">Booking Confirmed!</h1>
+            <p class="text-muted mb-4">Your booking has been successfully confirmed.</p>
+            
+            <div class="booking-reference mb-4">
+                <small class="text-muted">Booking Reference</small>
+                <h4 class="mb-0">{{booking._id}}</h4>
+            </div>
+            
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="booking-details-card text-start">
+                        <h5 class="mb-3">Booking Details</h5>
+                        <div class="row">
+                            <div class="col-6 mb-2">
+                                <small class="text-muted">Property</small>
+                                <div class="fw-semibold">{{booking.room.name}}</div>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <small class="text-muted">Location</small>
+                                <div class="fw-semibold">{{booking.room.city}}</div>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <small class="text-muted">Check-in</small>
+                                <div class="fw-semibold">{{formatDate booking.checkIn 'MMM DD, YYYY'}}</div>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <small class="text-muted">Check-out</small>
+                                <div class="fw-semibold">{{formatDate booking.checkOut 'MMM DD, YYYY'}}</div>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <small class="text-muted">Guests</small>
+                                <div class="fw-semibold">{{booking.guests}} guests</div>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <small class="text-muted">Total paid</small>
+                                <div class="fw-semibold text-primary">{{formatCurrency booking.totalPrice}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="action-buttons mt-4">
+                <a href="/my-bookings" class="btn btn-primary me-3">
+                    <i class="bi bi-calendar"></i> View My Bookings
+                </a>
+                <a href="/" class="btn btn-outline-secondary">
+                    <i class="bi bi-house"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.confirmation-page {
+    background: #F7F7F7;
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+}
+
+.confirmation-card {
+    background: white;
+    border-radius: 24px;
+    padding: 48px 32px;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.success-icon {
+    font-size: 80px;
+    color: #34A853;
+}
+
+.success-icon i {
+    font-size: 80px;
+}
+
+.booking-reference {
+    background: #F7F7F7;
+    border-radius: 12px;
+    padding: 12px;
+    display: inline-block;
+    min-width: 250px;
+}
+
+.booking-details-card {
+    background: #F7F7F7;
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.btn-primary {
+    background: #FF385C;
+    border: none;
+    border-radius: 40px;
+    padding: 12px 24px;
+}
+
+.btn-primary:hover {
+    background: #E31C5F;
+}
+
+.btn-outline-secondary {
+    border-radius: 40px;
+    padding: 12px 24px;
+}
+
+@media (max-width: 576px) {
+    .confirmation-card {
+        padding: 32px 20px;
+    }
+    
+    .success-icon i {
+        font-size: 60px;
+    }
+    
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .action-buttons a {
+        margin: 0 !important;
+    }
+}
+</style>

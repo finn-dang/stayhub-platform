@@ -1,0 +1,300 @@
+{{!-- src/views/pages/room-detail.hbs --}}
+<div class="room-detail-page">
+    <div class="container py-4">
+        {{#if query.error}}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> {{query.error}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {{/if}}
+        
+        <div class="row">
+            <!-- Image Gallery -->
+            <div class="col-12 mb-4">
+                <div id="roomCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner rounded-4">
+                        {{#each room.images}}
+                        <div class="carousel-item {{#if @first}}active{{/if}}">
+                            <img src="{{this.url}}" class="d-block w-100" style="height: 500px; object-fit: cover;" alt="Room image">
+                        </div>
+                        {{/each}}
+                        {{#unless room.images.length}}
+                        <div class="carousel-item active">
+                            <img src="https://placehold.co/1200x500/F7F7F7/717171?text=No+Image+Available" class="d-block w-100" style="height: 500px; object-fit: cover;">
+                        </div>
+                        {{/unless}}
+                    </div>
+                    {{#if (gt room.images.length 1)}}
+                    <button class="carousel-control-prev" type="button" data-bs-target="#roomCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#roomCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                    {{/if}}
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <h1 class="room-title">{{room.name}}</h1>
+                <div class="room-location mb-3">
+                    <i class="bi bi-geo-alt-fill text-primary"></i> 
+                    {{room.address}}, {{room.city}}{{#if room.district}}, {{room.district}}{{/if}}
+                </div>
+                
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="rating-stars">
+                        {{#times 5}}
+                            {{#if (lt this ../room.rating)}}
+                            <i class="bi bi-star-fill text-warning"></i>
+                            {{else if (eq this (floor ../room.rating))}}
+                            <i class="bi bi-star-half text-warning"></i>
+                            {{else}}
+                            <i class="bi bi-star text-muted"></i>
+                            {{/if}}
+                        {{/times}}
+                    </div>
+                    <span class="text-muted">{{room.review_count}} reviews</span>
+                    <span class="text-muted">•</span>
+                    <span><i class="bi bi-eye"></i> {{room.views}} views</span>
+                </div>
+                
+                <hr>
+                
+                <!-- Host Info -->
+                <div class="host-info d-flex align-items-center gap-3 mb-4 p-3 bg-light rounded-3">
+                    <div class="host-avatar-large">
+                        {{#if room.host.avatar}}
+                        <img src="{{room.host.avatar}}" alt="{{room.host.name}}" class="rounded-circle" width="64" height="64">
+                        {{else}}
+                        <div class="default-avatar-large bg-primary text-white d-flex align-items-center justify-content-center rounded-circle" style="width: 64px; height: 64px;">
+                            <i class="bi bi-person-fill fs-1"></i>
+                        </div>
+                        {{/if}}
+                    </div>
+                    <div>
+                        <h5 class="mb-1">Hosted by {{room.host.name}}</h5>
+                        <p class="text-muted mb-0"><i class="bi bi-envelope"></i> {{room.host.email}}</p>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <!-- Description -->
+                <h3>About this place</h3>
+                <p class="room-description">{{room.description}}</p>
+                
+                <hr>
+                
+                <!-- Amenities -->
+                <h3>Amenities</h3>
+                <div class="amenities-grid row">
+                    {{#if room.amenities.wifi}}
+                    <div class="col-md-4 mb-3">
+                        <i class="bi bi-wifi fs-5 me-2"></i> WiFi
+                    </div>
+                    {{/if}}
+                    {{#if room.amenities.air_conditioner}}
+                    <div class="col-md-4 mb-3">
+                        <i class="bi bi-snow fs-5 me-2"></i> Air Conditioning
+                    </div>
+                    {{/if}}
+                    {{#if room.amenities.parking}}
+                    <div class="col-md-4 mb-3">
+                        <i class="bi bi-p-square fs-5 me-2"></i> Free Parking
+                    </div>
+                    {{/if}}
+                    {{#if room.amenities.kitchen}}
+                    <div class="col-md-4 mb-3">
+                        <i class="bi bi-egg-fried fs-5 me-2"></i> Kitchen
+                    </div>
+                    {{/if}}
+                    {{#if room.amenities.pool}}
+                    <div class="col-md-4 mb-3">
+                        <i class="bi bi-water fs-5 me-2"></i> Pool
+                    </div>
+                    {{/if}}
+                    {{#if room.amenities.tv}}
+                    <div class="col-md-4 mb-3">
+                        <i class="bi bi-tv fs-5 me-2"></i> TV
+                    </div>
+                    {{/if}}
+                </div>
+                
+                <hr>
+                
+                <!-- Room Details -->
+                <h3>Room details</h3>
+                <div class="room-details-grid row">
+                    <div class="col-md-4 mb-3">
+                        <i class="bi bi-people fs-5 me-2"></i> {{room.maximuncus}} guests maximum
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <i class="bi bi-door-closed fs-5 me-2"></i> {{room.bedroom}} bedroom(s)
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <i class="bi bi-bed fs-5 me-2"></i> {{room.bed}} bed(s)
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <i class="bi bi-droplet fs-5 me-2"></i> {{room.shower}} bathroom(s)
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Booking Card -->
+            <div class="col-lg-4">
+                <div class="booking-card card shadow-lg sticky-top" style="top: 90px; border-radius: 16px;">
+                    <div class="card-body p-4">
+                        <div class="price-display mb-3">
+                            <span class="display-price">{{formatCurrency room.price}}</span>
+                            <span class="text-muted"> / night</span>
+                        </div>
+                        
+                        {{#if isLoggedIn}}
+                            {{#if (eq user_role 'host')}}
+                            <div class="alert alert-info mb-3">
+                                <i class="bi bi-info-circle"></i> You are viewing as a host
+                            </div>
+                            {{/if}}
+                            <form action="/rooms/{{room._id}}/checkout" method="get">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Check-in</label>
+                                    <input type="date" name="checkIn" class="form-control" required min="{{today}}" id="checkIn">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Check-out</label>
+                                    <input type="date" name="checkOut" class="form-control" required id="checkOut">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Guests</label>
+                                    <input type="number" name="guests" class="form-control" min="1" max="{{room.maximuncus}}" value="1">
+                                    <small class="text-muted">Maximum {{room.maximuncus}} guests</small>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 py-3 fw-semibold">
+                                    Reserve
+                                </button>
+                            </form>
+                        {{else}}
+                            <div class="alert alert-warning mb-0">
+                                <i class="bi bi-lock"></i> Please <a href="/login?redirect=/rooms/{{room._id}}" class="alert-link">login</a> to book this place
+                            </div>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Similar Rooms -->
+        {{#if similarRooms.length}}
+        <div class="similar-rooms mt-5 pt-4">
+            <h2 class="mb-4">Similar places you might like</h2>
+            <div class="row">
+                {{#each similarRooms}}
+                <div class="col-md-3 mb-3">
+                    <a href="/rooms/{{this._id}}" class="similar-card text-decoration-none">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <img src="{{#if this.images}}{{this.images.[0].url}}{{else}}https://placehold.co/300x200/F7F7F7/717171?text=No+Image{{/if}}" 
+                                 class="card-img-top rounded-top" style="height: 150px; object-fit: cover;">
+                            <div class="card-body">
+                                <h6 class="card-title text-dark">{{this.name}}</h6>
+                                <p class="card-text text-muted small">{{this.city}}</p>
+                                <p class="card-text fw-bold text-primary">{{formatCurrency this.price}} <small class="fw-normal">/night</small></p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+        {{/if}}
+    </div>
+</div>
+
+<style>
+.room-detail-page {
+    background: #F7F7F7;
+    min-height: calc(100vh - 200px);
+}
+
+.room-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #222222;
+}
+
+.room-location {
+    font-size: 16px;
+    color: #717171;
+}
+
+.room-description {
+    color: #484848;
+    line-height: 1.6;
+}
+
+.booking-card {
+    border: none;
+}
+
+.display-price {
+    font-size: 28px;
+    font-weight: 700;
+    color: #FF385C;
+}
+
+.price-display {
+    border-bottom: 1px solid #EAEAEA;
+    padding-bottom: 16px;
+}
+
+.form-control {
+    border-radius: 12px;
+    border: 1px solid #DDDDDD;
+    padding: 12px;
+}
+
+.form-control:focus {
+    border-color: #FF385C;
+    box-shadow: 0 0 0 3px rgba(255, 56, 92, 0.1);
+}
+
+.similar-card {
+    transition: transform 0.3s ease;
+    display: block;
+}
+
+.similar-card:hover {
+    transform: translateY(-4px);
+}
+
+@media (max-width: 768px) {
+    .room-title {
+        font-size: 24px;
+    }
+    
+    .booking-card {
+        margin-top: 24px;
+        position: relative !important;
+        top: 0 !important;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkInInput = document.getElementById('checkIn');
+    const checkOutInput = document.getElementById('checkOut');
+    
+    if (checkInInput && checkOutInput) {
+        checkInInput.addEventListener('change', function() {
+            if (checkOutInput.value && checkOutInput.value <= this.value) {
+                checkOutInput.value = '';
+            }
+            checkOutInput.min = this.value;
+        });
+    }
+});
+</script>

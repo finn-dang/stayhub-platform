@@ -1,0 +1,162 @@
+{{!-- src/views/layouts/main.hbs --}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="HostHub - Find your perfect stay. Discover unique homes and experience the world like never before.">
+    <meta name="theme-color" content="#FF385C">
+    <meta name="keywords" content="vacation rentals, short-term rentals, hosthub, travel, booking">
+    <meta name="author" content="HostHub">
+    
+    <title>{{title}} | HostHub</title>
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    
+    <!-- Slick Carousel CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- Custom Base Styles -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #484848;
+            background-color: #F7F7F7;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .main-content {
+            min-height: calc(100vh - 200px);
+        }
+        
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FF385C;
+        }
+        
+        /* Loading Skeleton */
+        .skeleton-card {
+            background: #e0e0e0;
+            border-radius: 12px;
+            animation: shimmer 1.5s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.5; }
+        }
+        
+        /* Utility Classes */
+        .text-primary-custom {
+            color: #FF385C;
+        }
+        
+        .bg-primary-custom {
+            background: #FF385C;
+        }
+        
+        .btn-primary-custom {
+            background: #FF385C;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary-custom:hover {
+            background: #E31C5F;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 56, 92, 0.3);
+        }
+        
+        .container-custom {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container-custom {
+                padding: 0 1rem;
+            }
+        }
+    </style>
+    
+    {{{_style}}}
+</head>
+<body>
+    {{> header}}
+    
+    <main class="main-content">
+        {{{body}}}
+    </main>
+    
+    {{> footer}}
+    {{> toast}}
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+    <!-- Bootstrap 5.3 Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Slick Carousel JS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    
+    <!-- Custom Scripts Block -->
+    {{{_script}}}
+    
+    <script>
+        // Global flash messages handler
+        window.flashMessages = {
+            success_msg: '{{success_msg}}',
+            error_msg: '{{error_msg}}',
+            warning_msg: '{{warning_msg}}',
+            info_msg: '{{info_msg}}'
+        };
+        
+        // Auto-show flash messages after DOM ready
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof showToast !== 'undefined') {
+                if (window.flashMessages.success_msg) showToast(window.flashMessages.success_msg, 'success');
+                if (window.flashMessages.error_msg) showToast(window.flashMessages.error_msg, 'error');
+                if (window.flashMessages.warning_msg) showToast(window.flashMessages.warning_msg, 'warning');
+                if (window.flashMessages.info_msg) showToast(window.flashMessages.info_msg, 'info');
+            }
+        });
+    </script>
+</body>
+</html>

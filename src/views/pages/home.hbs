@@ -1,0 +1,1055 @@
+<div class="home-page">
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Find your perfect stay ✨</h1>
+            <p class="hero-subtitle">Discover unique homes and experience the world like never before</p>
+        </div>
+    </section>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+        <div class="search-card">
+            <form action="/" method="GET" class="search-form">
+                <div class="search-input-wrapper">
+                    <i class="bi bi-search"></i>
+                    <input type="text" 
+                           name="search" 
+                           placeholder="Search destinations..." 
+                           value="{{query.search}}"
+                           class="search-input">
+                </div>
+                <button type="submit" class="search-btn">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Categories Section -->
+    <section class="categories-section">
+        <div class="categories-wrapper">
+            <div class="category-item {{#unless query.type}}active{{/unless}}" data-category-id="all">
+                <div class="category-icon">
+                    <i class="bi bi-grid-3x3-gap-fill"></i>
+                </div>
+                <span class="category-name">All</span>
+            </div>
+            {{#each house_category_list}}
+            <div class="category-item {{#if (eq ../query.type this._id)}}active{{/if}}" data-category-id="{{this._id}}">
+                <div class="category-icon">
+                    <img src="{{this.img}}" alt="{{this.name}}" loading="lazy">
+                </div>
+                <span class="category-name">{{this.name}}</span>
+            </div>
+            {{/each}}
+        </div>
+    </section>
+
+    <!-- Sort & Filter Bar -->
+    <section class="sort-filter-section">
+        <div class="sort-filter-container">
+            <div class="sort-buttons">
+                <a href="?{{#if query.search}}search={{query.search}}&{{/if}}{{#if query.type}}type={{query.type}}&{{/if}}incre=true" 
+                   class="sort-btn {{#if query.incre}}active{{/if}}">
+                    <i class="bi bi-sort-up"></i> Price: Low to High
+                </a>
+                <a href="?{{#if query.search}}search={{query.search}}&{{/if}}{{#if query.type}}type={{query.type}}&{{/if}}dec=true" 
+                   class="sort-btn {{#if query.dec}}active{{/if}}">
+                    <i class="bi bi-sort-down"></i> Price: High to Low
+                </a>
+            </div>
+            <button class="filter-btn" data-bs-toggle="modal" data-bs-target="#filterModal">
+                <i class="bi bi-funnel"></i> Filters
+            </button>
+        </div>
+    </section>
+
+    <!-- Properties Grid -->
+    <section class="properties-section">
+        <div class="container-custom">
+            {{#if sorted_house_list.length}}
+            <div class="properties-grid">
+                {{#each sorted_house_list}}
+                <div class="property-card" data-room-id="{{this._id}}">
+                    <div class="card-image-container">
+                        <div id="carousel-{{@index}}" class="carousel slide card-carousel" data-bs-ride="false">
+                            <div class="carousel-inner">
+                                {{#each this.images}}
+                                <div class="carousel-item {{#if @first}}active{{/if}}">
+                                    <img src="{{this.url}}" class="card-image" alt="Property image" loading="lazy">
+                                </div>
+                                {{/each}}
+                            </div>
+                            {{#if (gt this.images.length 1)}}
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{@index}}" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{@index}}" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            </button>
+                            {{/if}}
+                        </div>
+                        
+                        <!-- Host Avatar -->
+                        <div class="host-avatar-wrapper">
+                            {{#if this.host.avatar}}
+                            <img src="{{this.host.avatar}}" alt="{{this.host.name}}" class="host-avatar">
+                            {{else}}
+                            <div class="host-avatar default-avatar">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            {{/if}}
+                        </div>
+                        
+                        <!-- Wishlist Button -->
+                        <button class="wishlist-btn" data-room-id="{{this._id}}">
+                            <i class="bi bi-heart"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="card-content">
+                        <h3 class="property-name">{{this.name}}</h3>
+                        <div class="property-location">
+                            <i class="bi bi-geo-alt-fill"></i> {{this.city}}{{#if this.district}}, {{this.district}}{{/if}}
+                        </div>
+                        <div class="rating">
+                            <div class="stars">
+                                {{#times 5}}
+                                    {{#if (lt this ../this.rating)}}
+                                    <i class="bi bi-star-fill"></i>
+                                    {{else if (eq this (floor ../this.rating))}}
+                                    <i class="bi bi-star-half"></i>
+                                    {{else}}
+                                    <i class="bi bi-star"></i>
+                                    {{/if}}
+                                {{/times}}
+                            </div>
+                            <span class="review-count">({{this.review_count}} reviews)</span>
+                        </div>
+                        <div class="price">
+                            {{formatCurrency this.price}} <span>/ night</span>
+                        </div>
+                        <a href="/rooms/{{this._id}}" class="view-details-link">View Details →</a>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+            {{else}}
+            <!-- Empty State -->
+            <div class="empty-state">
+                <i class="bi bi-house-slash"></i>
+                <h3>No properties found</h3>
+                <p>We couldn't find any properties matching your criteria. Try adjusting your search or filters.</p>
+                <a href="/" class="empty-state-btn">Clear all filters</a>
+            </div>
+            {{/if}}
+        </div>
+    </section>
+</div>
+
+<!-- Filter Modal -->
+<div class="modal fade" id="filterModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Filters</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="filterForm" method="GET" action="/">
+                    <!-- Preserve existing query params -->
+                    {{#if query.search}}
+                    <input type="hidden" name="search" value="{{query.search}}">
+                    {{/if}}
+                    {{#if query.type}}
+                    <input type="hidden" name="type" value="{{query.type}}">
+                    {{/if}}
+                    {{#if query.incre}}
+                    <input type="hidden" name="incre" value="true">
+                    {{/if}}
+                    {{#if query.dec}}
+                    <input type="hidden" name="dec" value="true">
+                    {{/if}}
+                    
+                    <!-- Price Range -->
+                    <div class="filter-group">
+                        <label class="filter-label">Price Range (VND)</label>
+                        <div class="price-range-inputs">
+                            <input type="number" name="minPrice" class="form-control" placeholder="Min" value="{{query.minPrice}}">
+                            <span>-</span>
+                            <input type="number" name="maxPrice" class="form-control" placeholder="Max" value="{{query.maxPrice}}">
+                        </div>
+                    </div>
+                    
+                    <!-- Guests -->
+                    <div class="filter-group">
+                        <label class="filter-label">Guests</label>
+                        <select name="quantity" class="form-select">
+                            <option value="0">Any</option>
+                            <option value="1" {{#if (eq query.quantity "1")}}selected{{/if}}>1 guest</option>
+                            <option value="2" {{#if (eq query.quantity "2")}}selected{{/if}}>2 guests</option>
+                            <option value="3" {{#if (eq query.quantity "3")}}selected{{/if}}>3 guests</option>
+                            <option value="4" {{#if (eq query.quantity "4")}}selected{{/if}}>4 guests</option>
+                            <option value="5" {{#if (eq query.quantity "5")}}selected{{/if}}>5 guests</option>
+                            <option value="6" {{#if (eq query.quantity "6")}}selected{{/if}}>6+ guests</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="filterForm" class="btn btn-primary">Apply Filters</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Wishlist Modal -->
+<div class="modal fade" id="wishlistModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add to Wishlist</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="wishlist-modal-text">Choose a wishlist to save this property:</p>
+                <div class="wishlist-options">
+                    <!-- Wishlist options will be populated dynamically -->
+                    <div class="text-muted text-center">Loading wishlists...</div>
+                </div>
+                <button class="btn btn-outline-primary w-100 mt-3" id="createNewWishlistBtn">
+                    <i class="bi bi-plus-circle"></i> Create New Wishlist
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Wishlist Modal -->
+<div class="modal fade" id="createWishlistModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create New Wishlist</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createWishlistForm">
+                    <div class="mb-3">
+                        <label for="wishlistName" class="form-label">Wishlist Name</label>
+                        <input type="text" class="form-control" id="wishlistName" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="createWishlistForm" class="btn btn-primary">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Home Page Styles */
+.home-page {
+    min-height: 100vh;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #FF385C 0%, #E31C5F 100%);
+    padding: 80px 20px 100px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+    background-size: cover;
+    opacity: 0.3;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-title {
+    font-size: 48px;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 16px;
+    animation: fadeInUp 0.6s ease;
+}
+
+.hero-subtitle {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.95);
+    animation: fadeInUp 0.6s ease 0.1s both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Search Container */
+.search-container {
+    max-width: 800px;
+    margin: -50px auto 0;
+    padding: 0 20px;
+    position: relative;
+    z-index: 10;
+}
+
+.search-card {
+    background: white;
+    border-radius: 80px;
+    padding: 8px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    transition: box-shadow 0.3s ease;
+}
+
+.search-card:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.16);
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.search-input-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    background: #F7F7F7;
+    border-radius: 40px;
+}
+
+.search-input-wrapper i {
+    color: #FF385C;
+    font-size: 20px;
+}
+
+.search-input {
+    flex: 1;
+    border: none;
+    background: none;
+    outline: none;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+}
+
+.search-input::placeholder {
+    color: #B0B0B0;
+}
+
+.search-btn {
+    background: #FF385C;
+    color: white;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 40px;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.search-btn:hover {
+    background: #E31C5F;
+    transform: scale(1.02);
+}
+
+/* Categories Section */
+.categories-section {
+    background: white;
+    padding: 40px 20px;
+    border-bottom: 1px solid #EAEAEA;
+    overflow-x: auto;
+}
+
+.categories-wrapper {
+    display: flex;
+    gap: 32px;
+    max-width: 1280px;
+    margin: 0 auto;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    padding-bottom: 8px;
+}
+
+.categories-wrapper::-webkit-scrollbar {
+    height: 4px;
+}
+
+.categories-wrapper::-webkit-scrollbar-track {
+    background: #F7F7F7;
+    border-radius: 4px;
+}
+
+.categories-wrapper::-webkit-scrollbar-thumb {
+    background: #FF385C;
+    border-radius: 4px;
+}
+
+.category-item {
+    flex-shrink: 0;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 8px;
+    border-radius: 40px;
+}
+
+.category-item:hover {
+    transform: translateY(-4px);
+}
+
+.category-item.active {
+    color: #FF385C;
+}
+
+.category-item.active .category-icon {
+    border-color: #FF385C;
+    box-shadow: 0 0 0 2px #FF385C;
+}
+
+.category-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 8px;
+    border-radius: 50%;
+    background: #F7F7F7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.category-icon img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.category-icon i {
+    font-size: 32px;
+    color: #FF385C;
+}
+
+.category-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #484848;
+}
+
+/* Sort & Filter Section */
+.sort-filter-section {
+    background: white;
+    padding: 16px 20px;
+    border-bottom: 1px solid #EAEAEA;
+    position: sticky;
+    top: 73px;
+    z-index: 99;
+}
+
+.sort-filter-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.sort-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.sort-btn {
+    padding: 8px 20px;
+    border-radius: 40px;
+    border: 1px solid #DDDDDD;
+    background: white;
+    text-decoration: none;
+    color: #484848;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sort-btn:hover {
+    border-color: #222222;
+    transform: translateY(-1px);
+}
+
+.sort-btn.active {
+    background: #222222;
+    color: white;
+    border-color: #222222;
+}
+
+.filter-btn {
+    padding: 8px 20px;
+    border-radius: 40px;
+    border: 1px solid #DDDDDD;
+    background: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    border-color: #222222;
+    background: #F7F7F7;
+}
+
+/* Properties Section */
+.properties-section {
+    padding: 40px 20px;
+}
+
+.container-custom {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.properties-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+
+/* Property Card */
+.property-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    animation: fadeInUp 0.6s ease;
+}
+
+.property-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+.card-image-container {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.property-card:hover .card-image {
+    transform: scale(1.05);
+}
+
+.card-carousel {
+    height: 100%;
+}
+
+.card-carousel .carousel-inner,
+.card-carousel .carousel-item {
+    height: 100%;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: 32px;
+    height: 32px;
+    background: white;
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.property-card:hover .carousel-control-prev,
+.property-card:hover .carousel-control-next {
+    opacity: 0.9;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.host-avatar-wrapper {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+}
+
+.host-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid white;
+    object-fit: cover;
+}
+
+.default-avatar {
+    background: #FF385C;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.default-avatar i {
+    font-size: 20px;
+}
+
+.wishlist-btn {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+.wishlist-btn:hover {
+    transform: scale(1.1);
+    background: white;
+}
+
+.wishlist-btn i {
+    font-size: 18px;
+    color: #FF385C;
+}
+
+.card-content {
+    padding: 16px;
+}
+
+.property-name {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 4px;
+    color: #222222;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.property-location {
+    font-size: 14px;
+    color: #717171;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.property-location i {
+    font-size: 12px;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.stars {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.stars i {
+    font-size: 14px;
+    color: #FF385C;
+}
+
+.review-count {
+    font-size: 14px;
+    color: #717171;
+}
+
+.price {
+    font-weight: 700;
+    font-size: 18px;
+    color: #222222;
+    margin-bottom: 8px;
+}
+
+.price span {
+    font-weight: 400;
+    font-size: 14px;
+    color: #717171;
+}
+
+.view-details-link {
+    display: inline-block;
+    color: #FF385C;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.view-details-link:hover {
+    color: #E31C5F;
+    transform: translateX(4px);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    background: white;
+    border-radius: 12px;
+}
+
+.empty-state i {
+    font-size: 80px;
+    color: #FF385C;
+    margin-bottom: 24px;
+}
+
+.empty-state h3 {
+    font-size: 24px;
+    margin-bottom: 12px;
+    color: #222222;
+}
+
+.empty-state p {
+    color: #717171;
+    margin-bottom: 24px;
+}
+
+.empty-state-btn {
+    display: inline-block;
+    padding: 12px 32px;
+    background: #FF385C;
+    color: white;
+    text-decoration: none;
+    border-radius: 40px;
+    transition: all 0.3s ease;
+}
+
+.empty-state-btn:hover {
+    background: #E31C5F;
+    transform: translateY(-2px);
+}
+
+/* Filter Modal */
+.filter-group {
+    margin-bottom: 24px;
+}
+
+.filter-label {
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: block;
+    color: #222222;
+}
+
+.price-range-inputs {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.price-range-inputs input {
+    flex: 1;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .properties-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .hero-title {
+        font-size: 36px;
+    }
+    
+    .properties-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 60px 20px 80px;
+    }
+    
+    .hero-title {
+        font-size: 28px;
+    }
+    
+    .hero-subtitle {
+        font-size: 16px;
+    }
+    
+    .search-card {
+        border-radius: 20px;
+    }
+    
+    .search-form {
+        flex-direction: column;
+    }
+    
+    .search-input-wrapper {
+        width: 100%;
+    }
+    
+    .search-btn {
+        width: 100%;
+    }
+    
+    .sort-filter-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .sort-buttons {
+        justify-content: center;
+    }
+    
+    .filter-btn {
+        justify-content: center;
+    }
+    
+    .properties-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .category-icon {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .category-icon img,
+    .category-icon i {
+        width: 28px;
+        height: 28px;
+        font-size: 28px;
+    }
+    
+    .category-name {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 576px) {
+    .categories-wrapper {
+        gap: 20px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Category filter
+    const categoryItems = document.querySelectorAll('.category-item');
+    categoryItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const categoryId = this.dataset.categoryId;
+            const url = new URL(window.location.href);
+            if (categoryId && categoryId !== 'all') {
+                url.searchParams.set('type', categoryId);
+            } else {
+                url.searchParams.delete('type');
+            }
+            window.location.href = url.toString();
+        });
+    });
+    
+    // Wishlist button click
+    const wishlistBtns = document.querySelectorAll('.wishlist-btn');
+    wishlistBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const roomId = this.dataset.roomId;
+            
+            {{#if isLoggedIn}}
+            // Show wishlist modal
+            const wishlistModal = new bootstrap.Modal(document.getElementById('wishlistModal'));
+            // Fetch wishlists and populate modal
+            fetchWishlists(roomId);
+            wishlistModal.show();
+            {{else}}
+            if (typeof toastWarning !== 'undefined') {
+                toastWarning('Please login to add to wishlist');
+            } else {
+                window.location.href = '/login?redirect=' + encodeURIComponent(window.location.href);
+            }
+            {{/if}}
+        });
+    });
+    
+    // Create wishlist
+    const createBtn = document.getElementById('createNewWishlistBtn');
+    if (createBtn) {
+        createBtn.addEventListener('click', function() {
+            bootstrap.Modal.getInstance(document.getElementById('wishlistModal')).hide();
+            const createModal = new bootstrap.Modal(document.getElementById('createWishlistModal'));
+            createModal.show();
+        });
+    }
+    
+    // Submit create wishlist form
+    const createForm = document.getElementById('createWishlistForm');
+    if (createForm) {
+        createForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('wishlistName').value;
+            if (!name) return;
+            
+            try {
+                const response = await fetch('/api/wishlist/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    if (typeof toastSuccess !== 'undefined') {
+                        toastSuccess('Wishlist created!');
+                    }
+                    bootstrap.Modal.getInstance(document.getElementById('createWishlistModal')).hide();
+                }
+            } catch (error) {
+                console.error('Error creating wishlist:', error);
+            }
+        });
+    }
+    
+    // Carousel initialization - prevent card click when clicking carousel controls
+    document.querySelectorAll('.carousel-control-prev, .carousel-control-next').forEach(control => {
+        control.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+    
+    // Property card click
+    document.querySelectorAll('.property-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (!e.target.closest('.carousel-control-prev') && 
+                !e.target.closest('.carousel-control-next') &&
+                !e.target.closest('.wishlist-btn')) {
+                const roomId = this.dataset.roomId;
+                if (roomId) {
+                    window.location.href = `/rooms/${roomId}`;
+                }
+            }
+        });
+    });
+});
+
+async function fetchWishlists(roomId) {
+    try {
+        const response = await fetch('/api/wishlist/list');
+        const wishlists = await response.json();
+        const container = document.querySelector('.wishlist-options');
+        
+        if (wishlists.length === 0) {
+            container.innerHTML = '<div class="text-muted text-center">No wishlists yet. Create one to get started!</div>';
+            return;
+        }
+        
+        container.innerHTML = wishlists.map(wishlist => `
+            <div class="wishlist-option">
+                <input type="radio" name="wishlistId" id="wishlist_${wishlist._id}" value="${wishlist._id}">
+                <label for="wishlist_${wishlist._id}">
+                    <i class="bi bi-heart"></i> ${wishlist.name}
+                </label>
+            </div>
+        `).join('');
+        
+        // Add save button
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'btn btn-primary w-100 mt-3';
+        saveBtn.textContent = 'Save';
+        saveBtn.onclick = () => saveToWishlist(roomId);
+        container.appendChild(saveBtn);
+    } catch (error) {
+        console.error('Error fetching wishlists:', error);
+    }
+}
+
+async function saveToWishlist(roomId) {
+    const selectedWishlist = document.querySelector('input[name="wishlistId"]:checked');
+    if (!selectedWishlist) {
+        if (typeof toastWarning !== 'undefined') {
+            toastWarning('Please select a wishlist');
+        }
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/wishlist/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ wishlistId: selectedWishlist.value, roomId })
+        });
+        const data = await response.json();
+        if (data.success) {
+            if (typeof toastSuccess !== 'undefined') {
+                toastSuccess('Added to wishlist!');
+            }
+            bootstrap.Modal.getInstance(document.getElementById('wishlistModal')).hide();
+        }
+    } catch (error) {
+        console.error('Error saving to wishlist:', error);
+    }
+}
+</script>

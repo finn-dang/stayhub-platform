@@ -1,4 +1,4 @@
-const userModel = require("../../models/user.model");
+const userModel = require("../../models/User");
 const { verifyEmail, sendPassword } = require("../../config/nodemail");
 const generator = require('generate-password');
 const bcrypt = require("bcrypt");
